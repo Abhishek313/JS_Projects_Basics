@@ -1,10 +1,14 @@
-const productContainer = document.querySelector('.products')
+const productContainer = document.querySelector('.products-container')
+
+const loadMoreButton   = document.querySelector('.load-more-btn')
+
+let currentStep = 0;
 
 
-async function fetchListOfProducts() {
+async function fetchListOfProducts(getCurrentStep) {
 
     try {
-        const response = await fetch('https://dummyjson.com/products',{
+        const response = await fetch(`https://dummyjson.com/products?limit=10&skip=${(getCurrentStep===0?0:getCurrentStep*10)}`,{
             method: 'GET'
         })
 
@@ -21,7 +25,7 @@ async function fetchListOfProducts() {
     }
 }
 
-fetchListOfProducts()
+
 
 function displayProducts(productList) {
 console.log(productList)
@@ -33,11 +37,14 @@ productList.forEach(productItem => {
     const productDescription = document.createElement('p')
     const productPrice       = document.createElement('p')
 
+    productItemWrapper.classList.add('product-item-wrapper');
     productTitle.textContent       = productItem.title;
     productDescription.textContent = productItem.description;
     productThumbnail.src           = productItem.thumbnail;
     productPrice.textContent       = productItem.price
     
+    console.log(productItemWrapper);
+
     productItemWrapper.appendChild(productThumbnail)
     productItemWrapper.appendChild(productTitle)
     productItemWrapper.appendChild(productPrice)
@@ -45,11 +52,11 @@ productList.forEach(productItem => {
 
     productContainer.appendChild(productItemWrapper)
     
-
-
-
 })
-
-
-
 }
+fetchListOfProducts(currentStep)
+
+loadMoreButton.addEventListener('click', () => {
+    console.log("hello")
+    fetchListOfProducts((++currentStep));
+})
